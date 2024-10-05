@@ -6,15 +6,18 @@ public class GameManager : MonoBehaviour
 {
     public PlayerController player1;
     public PlayerController player2;
-    private PlayerController currentHealth,currentPlayer;
+    private PlayerController currentPlayer;
 
     void Start()
     {
         currentPlayer = player1; // Set player 1 sebagai pemain pertama
+        player1.EnableThrow(); // Izinkan player 1 melempar pertama kali
+        player2.DisableThrow(); // Nonaktifkan lemparan untuk player 2 saat belum gilirannya
     }
 
     void Update()
     {
+        // Cek apakah giliran sudah selesai (misalnya saat lemparan selesai)
         if (Input.GetKeyDown(KeyCode.Return)) // Tombol untuk switch giliran
         {
             SwitchTurn();
@@ -23,20 +26,20 @@ public class GameManager : MonoBehaviour
 
     void SwitchTurn()
     {
-        currentPlayer = (currentPlayer == player1) ? player2 : player1;
-        Debug.Log("Turn switched to " + currentPlayer.gameObject.name);
-    }
+        // Tukar giliran antara player 1 dan player 2
+        if (currentPlayer == player1)
+        {
+            currentPlayer = player2;
+            player1.DisableThrow();
+            player2.EnableThrow();
+        }
+        else
+        {
+            currentPlayer = player1;
+            player2.DisableThrow();
+            player1.EnableThrow();
+        }
 
-    public void CheckGameOver()
-    {
-         // Gunakan getter method untuk mengakses nilai currentHealth
-        if (player1.GetComponent<PlayerHealth>().GetCurrentHealth() <= 0)
-        {
-            Debug.Log("Player 2 Wins!");
-        }
-        else if (player2.GetComponent<PlayerHealth>().GetCurrentHealth() <= 0)
-        {
-            Debug.Log("Player 1 Wins!");
-        }
+        Debug.Log("Turn switched to " + currentPlayer.gameObject.name);
     }
 }
