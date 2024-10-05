@@ -4,28 +4,39 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
-
     public PlayerController player1;
     public PlayerController player2;
-    private PlayerController currentPlayer;
-
-    void Awake()
-    {
-        Instance = this;
-    }
+    private PlayerController currentHealth,currentPlayer;
 
     void Start()
     {
-        currentPlayer = player1; // Mulai dengan pemain 1
-        currentPlayer.SetTurn(true); // Set giliran pemain 1
+        currentPlayer = player1; // Set player 1 sebagai pemain pertama
     }
 
-    public void EndTurn()
+    void Update()
     {
-        // Ganti giliran
-        currentPlayer.SetTurn(false);
-        currentPlayer = (currentPlayer == player1) ? player2 : player1; // Ganti ke pemain lain
-        currentPlayer.SetTurn(true);
+        if (Input.GetKeyDown(KeyCode.Return)) // Tombol untuk switch giliran
+        {
+            SwitchTurn();
+        }
+    }
+
+    void SwitchTurn()
+    {
+        currentPlayer = (currentPlayer == player1) ? player2 : player1;
+        Debug.Log("Turn switched to " + currentPlayer.gameObject.name);
+    }
+
+    public void CheckGameOver()
+    {
+         // Gunakan getter method untuk mengakses nilai currentHealth
+        if (player1.GetComponent<PlayerHealth>().GetCurrentHealth() <= 0)
+        {
+            Debug.Log("Player 2 Wins!");
+        }
+        else if (player2.GetComponent<PlayerHealth>().GetCurrentHealth() <= 0)
+        {
+            Debug.Log("Player 1 Wins!");
+        }
     }
 }
